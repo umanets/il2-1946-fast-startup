@@ -1,0 +1,98 @@
+name: Compatibility report
+description: Share your before/after startup results and system details so we can learn where this fix helps.
+title: "[compat] "
+labels: ["compatibility-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping! Please run `diagnose.ps1` first, and (optionally) time your startup
+        before and after applying the fix. Do **not** paste full file paths, usernames, or any
+        personal information — approximate locations are fine.
+
+  - type: input
+    id: il2-version
+    attributes:
+      label: IL-2 1946 version
+      placeholder: "e.g. 4.12.2"
+    validations:
+      required: true
+
+  - type: input
+    id: windows-version
+    attributes:
+      label: Windows version/build
+      placeholder: "e.g. Windows 11 Pro 23H2 (22631)"
+    validations:
+      required: true
+
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU and driver version
+      placeholder: "e.g. NVIDIA RTX 4070, driver 560.xx"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: renderer
+    attributes:
+      label: Renderer
+      options:
+        - OpenGL
+        - DirectX
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer-present
+    attributes:
+      label: Did diagnose.ps1 report DWM8And16BitMitigation as present?
+      options:
+        - "Yes (HKCU and HKLM)"
+        - "Yes (HKCU only)"
+        - "Yes (HKLM only)"
+        - "No"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: input
+    id: startup-before
+    attributes:
+      label: Startup time BEFORE the fix (seconds to main menu)
+      placeholder: "e.g. 150"
+
+  - type: input
+    id: startup-after
+    attributes:
+      label: Startup time AFTER the fix (seconds to main menu)
+      placeholder: "e.g. 20"
+
+  - type: dropdown
+    id: render-ok
+    attributes:
+      label: Did the main menu render correctly after the fix?
+      options:
+        - "Yes, looked normal"
+        - "No, colour/visual problems"
+        - "Did not apply the fix"
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else?
+      placeholder: "Thread count from diagnostics, background apps, modpacks, observations..."
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I did not include personal information (full paths, usernames, machine names).
+          required: true
+        - label: I understand this is a community project with no warranty.
+          required: true

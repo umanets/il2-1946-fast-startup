@@ -1,0 +1,9 @@
+# Normalize line endings. PowerShell/batch stay CRLF for Windows friendliness.
+* text=auto
+*.ps1  text eol=crlf
+*.psm1 text eol=crlf
+*.cmd  text eol=crlf
+*.bat  text eol=crlf
+*.md   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf

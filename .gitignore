@@ -1,0 +1,30 @@
+# Backups created by apply-fix.ps1 (keep local; never publish)
+backups/
+*.backup.json
+
+# Diagnostic captures / traces / dumps (never publish)
+*.etl
+*.etl.*
+*.dmp
+*.cab
+symcache/
+
+# Logs and screenshots
+*.log
+*.png
+*.jpg
+
+# ...but DO track the repo banner image
+!assets/banner.png
+
+# PowerShell / build / test artifacts
+testResults*.xml
+*.user
+
+# OS / editor cruft
+Thumbs.db
+desktop.ini
+.DS_Store
+.vs/
+.vscode/
+*.tmp
