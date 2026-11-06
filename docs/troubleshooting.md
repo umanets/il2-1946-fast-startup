@@ -55,6 +55,22 @@ Your `Layers` value contains a token the tool doesn't recognize. To be safe it r
   ```
 - Then please file a [compatibility report](../.github/ISSUE_TEMPLATE/compatibility-report.yml) describing your renderer and colour depth so others know.
 
+## Still slow because "Run this program in compatibility mode" is enabled
+
+If, on **Properties → Compatibility**, the box **"Run this program in compatibility mode for"** is
+checked (Windows XP / Vista / 7 / …), removing `DWM8And16BitMitigation` alone will **not** help —
+and it can look like the fix "resets itself".
+
+Reason: an old-Windows compatibility mode is itself a layer (`WINXPSP3`, `WIN7RTM`, `VISTARTM`, …)
+stored in the same `Layers` value, and those modes **bundle the same DWM 8/16-bit mitigation**. So
+the slow system-wide thread enumeration comes back from the OS mode even after the standalone
+`DWM8And16BitMitigation` token is gone. This tool deliberately preserves that OS-mode token (it does
+not touch unrelated compatibility settings), so you must turn it off yourself.
+
+Fix: **uncheck "Run this program in compatibility mode"** (Properties → Compatibility). IL-2 4.12 on
+Windows 10/11 does not need an old-OS compatibility mode. `diagnose.ps1` / `apply-fix.ps1` now warn
+when such a mode is detected.
+
 ## Verifying the current state at any time
 
 ```powershell

@@ -100,6 +100,26 @@ Describe 'Get-Il2LayerState (read-only)' {
         $s = Get-Il2LayerState -ExePath $Exe -Backend (New-TestBackend 'HIGHDPIAWARE DWM8And16BitMitigation' $null)
         $s.HKCU.OtherLayers | Should -Contain 'HIGHDPIAWARE'
     }
+    It 'flags an OS compatibility mode (which can keep startup slow)' {
+        $s = Get-Il2LayerState -ExePath $Exe -Backend (New-TestBackend 'WINXPSP3 DWM8And16BitMitigation' $null)
+        $s.OSCompatModePresent | Should -BeTrue
+        $s.HKCU.OSCompatModes  | Should -Contain 'WINXPSP3'
+    }
+    It 'reports no OS compatibility mode when none is set' {
+        (Get-Il2LayerState -ExePath $Exe -Backend (New-TestBackend 'DWM8And16BitMitigation' $null)).OSCompatModePresent | Should -BeFalse
+    }
+}
+
+Describe 'OS compatibility-mode token detection (Get-OSCompatModeTokens)' {
+    It 'finds XP/7 mode tokens and ignores non-OS tokens' {
+        Get-OSCompatModeTokens 'WINXPSP3'                         | Should -Contain 'WINXPSP3'
+        Get-OSCompatModeTokens '~ WIN7RTM DWM8And16BitMitigation' | Should -Contain 'WIN7RTM'
+        @(Get-OSCompatModeTokens 'DWM8And16BitMitigation HIGHDPIAWARE').Count | Should -Be 0
+        @(Get-OSCompatModeTokens '').Count                       | Should -Be 0
+    }
+    It 'is case-insensitive' {
+        @(Get-OSCompatModeTokens 'winxpsp3').Count | Should -BeGreaterThan 0
+    }
 }
 
 Describe 'Invoke-ApplyFix' {

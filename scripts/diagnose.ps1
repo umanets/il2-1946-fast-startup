@@ -52,6 +52,7 @@ foreach ($s in @($state.HKCU, $state.HKLM)) {
     if ($s.OtherLayers.Count) { Write-Host ("        other layers (would be preserved): {0}" -f ($s.OtherLayers -join ', ')) }
     if ($s.Prefixes.Count)    { Write-Host ("        control prefixes (preserved): {0}" -f ($s.Prefixes -join ' ')) }
     if ($s.HasUnknown)        { Write-Host "        NOTE: value has an unrecognized token; apply-fix would refuse without -Force." -ForegroundColor Yellow }
+    if ($s.OSCompatModes.Count) { Write-Host ("        WARNING: compatibility mode set ({0}) - see note below" -f ($s.OSCompatModes -join ', ')) -ForegroundColor Yellow }
 }
 Write-Host ""
 if ($state.ProblemPresent) {
@@ -59,6 +60,13 @@ if ($state.ProblemPresent) {
     Write-Host "Next:   .\apply-fix.ps1 -GamePath `"$GamePath`""
 } else {
     Write-Host "RESULT: '$problem' is NOT assigned to IL-2 here. No fix needed." -ForegroundColor Green
+}
+if ($state.OSCompatModePresent) {
+    Write-Host ""
+    Write-Host "IMPORTANT: 'Run this program in compatibility mode for <old Windows>' is enabled." -ForegroundColor Yellow
+    Write-Host "That OS mode bundles the same DWM 8/16-bit mitigation, so it can keep startup slow" -ForegroundColor Yellow
+    Write-Host "even after DWM8And16BitMitigation is removed. Turn it OFF for the fix to take effect:" -ForegroundColor Yellow
+    Write-Host "  Properties -> Compatibility -> uncheck 'Run this program in compatibility mode'." -ForegroundColor Yellow
 }
 Write-Host ""
 Write-Host "Note: this checks HKCU/HKLM AppCompatFlags\Layers only. Other AppCompat sources" -ForegroundColor DarkGray

@@ -69,6 +69,25 @@ function Resolve-LayerRemoval {
     [pscustomobject]@{ Action='Modify'; NewData=($remaining -join ' '); Unfamiliar=$p.HasUnknown; Reason='Removed problem layer; preserved other tokens' }
 }
 
+# "Run this program in compatibility mode for <old Windows>" tokens. These OS modes bundle the
+# same DWM 8/16-bit mitigation, so they can re-introduce the slow thread-enumeration even after
+# the standalone DWM8And16BitMitigation token is removed.
+$script:OSCompatModes = @(
+    'WIN95','WIN98','WINME',
+    'WINXPSP1','WINXPSP2','WINXPSP3',
+    'VISTARTM','VISTASP1','VISTASP2',
+    'WIN7RTM','WIN8RTM','WIN81RTM',
+    'WINSRV03SP1','WINSRV08SP1','WINSRV12RTM','WINSRV16RTM'
+)
+
+function Get-OSCompatModeTokens {
+    <# Return any OS-version compatibility-mode tokens present in a Layers value (case-insensitive). #>
+    param([string]$Data)
+    $tokens = @()
+    if ($Data) { $tokens = @($Data -split '\s+' | Where-Object { $_ -ne '' }) }
+    @($tokens | Where-Object { $script:OSCompatModes -contains $_ })
+}
+
 function Test-ValidExePath {
     param([string]$ExePath)
     if ([string]::IsNullOrWhiteSpace($ExePath)) { return $false }
@@ -185,10 +204,12 @@ function Get-Il2LayerState {
             ContainsProblem = ($v.Present -and $p.ContainsProblem)
             OtherLayers = $p.OtherLayers; Prefixes = $p.Prefixes
             HasUnknown  = ($v.Present -and $p.HasUnknown)
+            OSCompatModes = @(Get-OSCompatModeTokens $v.Data)
         }
     }
     [pscustomobject]@{
         ExePath=$ExePath; HKCU=$scopes['HKCU']; HKLM=$scopes['HKLM']
+        OSCompatModePresent = ((@($scopes['HKCU'].OSCompatModes).Count + @($scopes['HKLM'].OSCompatModes).Count) -gt 0)
         ProblemPresent = ($scopes['HKCU'].ContainsProblem -or $scopes['HKLM'].ContainsProblem)
     }
 }

@@ -34,6 +34,14 @@ if (-not (Test-ValidExePath $GamePath)) { Write-Error "Not an .exe path: '$GameP
 $problem = Get-ProblemLayerName
 $state = Get-Il2LayerState -ExePath $GamePath
 
+if ($state.OSCompatModePresent) {
+    Write-Host "WARNING: a Windows-version compatibility mode is set for this exe." -ForegroundColor Yellow
+    Write-Host "It bundles the same DWM mitigation, so startup may stay slow even after this fix." -ForegroundColor Yellow
+    Write-Host "For the fix to take effect, also turn OFF 'Run this program in compatibility mode'" -ForegroundColor Yellow
+    Write-Host "(Properties -> Compatibility). This tool does not change that setting." -ForegroundColor Yellow
+    Write-Host ""
+}
+
 if (-not $state.ProblemPresent) {
     Write-Host "Nothing to do: '$problem' is not assigned to '$GamePath' (already fixed or never set)." -ForegroundColor Green
     Write-Result "OK: nothing to do"
